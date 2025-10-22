@@ -1,7 +1,34 @@
-// =================================================================
-// FUNGSI 1: NAVIGASI TAB
-// =================================================================
 document.addEventListener('DOMContentLoaded', () => {
+    // Jalankan fungsi inisialisasi
+    initApp();
+});
+
+// =================================================================
+// INISIALISASI APLIKASI
+// =================================================================
+function initApp() {
+    // 1. Inisialisasi Tema (Dark Mode)
+    setupDarkMode();
+    
+    // 2. Setup Fitur To-Do
+    setupTodo();
+
+    // 3. Setup Fitur Minum Air (Harus di-setup sebelum dashboard di-update)
+    setupWaterTracker();
+
+    // 4. Inisialisasi Navigasi dan Dashboard (Ini dipanggil terakhir agar semua data siap)
+    setupNavigation();
+    updateDashboardInfo();
+    
+    // 5. Setup Fitur Cuaca
+    setupWeather();
+}
+
+// =================================================================
+// FUNGSI UMUM: NAVIGASI & DASHBOARD
+// =================================================================
+// [FUNGSI setupNavigation tetap sama]
+function setupNavigation() {
     const tabs = document.querySelectorAll('.tab-button');
     const contents = document.querySelectorAll('.tab-content');
 
@@ -9,174 +36,220 @@ document.addEventListener('DOMContentLoaded', () => {
         tab.addEventListener('click', () => {
             const targetId = tab.dataset.target;
 
-            // Hapus 'active' dari semua tombol dan konten
             tabs.forEach(t => t.classList.remove('active'));
-            contents.forEach(c => c.classList.remove('active'));
-
-            // Tambahkan 'active' ke tombol yang diklik
             tab.classList.add('active');
 
-            // Tampilkan konten yang sesuai
+            contents.forEach(c => c.classList.remove('active'));
             document.getElementById(targetId).classList.add('active');
+
+            // PERBAIKAN: Pastikan ringkasan di-update setiap kali kembali ke dashboard
+            if (targetId === 'dashboard') {
+                updateDashboardSummary();
+            }
         });
     });
-
-    // Tampilkan tanggal hari ini
-    document.getElementById('currentDate').textContent = new Date().toLocaleDateString('id-ID', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    });
-});
-
-
-// =================================================================
-// FUNGSI 2: DARK MODE TOGGLE
-// =================================================================
-const darkToggle = document.getElementById('darkToggle');
-const body = document.body;
-
-// Cek status dark mode tersimpan di localStorage saat memuat
-if (localStorage.getItem('darkMode') === 'enabled') {
-    body.classList.add('dark-mode');
-    darkToggle.innerHTML = '<i class="fas fa-sun"></i>'; // Ganti ke ikon matahari
 }
 
-darkToggle.addEventListener('click', () => {
-    body.classList.toggle('dark-mode');
+// [FUNGSI updateDashboardInfo tetap sama]
+function updateDashboardInfo() {
+    const today = new Date();
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const dateString = today.toLocaleDateString('id-ID', options);
+    
+    document.getElementById('date').textContent = dateString;
 
-    // Simpan preferensi ke localStorage
-    if (body.classList.contains('dark-mode')) {
-        localStorage.setItem('darkMode', 'enabled');
+    const hour = today.getHours();
+    let greeting;
+    if (hour < 10) {
+        greeting = "Selamat Pagi";
+    } else if (hour < 15) {
+        greeting = "Selamat Siang";
+    } else if (hour < 18) {
+        greeting = "Selamat Sore";
+    } else {
+        greeting = "Selamat Malam";
+    }
+    document.getElementById('greeting').textContent = `${greeting} di LifeSync!`;
+
+    updateDashboardSummary();
+}
+
+// PERBAIKAN: Fungsi ringkasan dashboard agar selalu memuat data terbaru
+function updateDashboardSummary() {
+    const summaryDiv = document.getElementById('summary');
+    
+    // Ambil data To-Do (diambil dari localStorage lagi untuk memastikan terbaru)
+    const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+    const totalTasks = tasks.length;
+    const completedTasks = tasks.filter(task => task.completed).length;
+
+    // Ambil data Air (diambil dari localStorage lagi untuk memastikan terbaru)
+    const waterCount = parseInt(localStorage.getItem('waterCount') || '0');
+    const waterTarget = parseInt(document.getElementById('waterTarget').textContent);
+
+    // KETERANGAN AIR
+    let waterStatus = waterCount >= waterTarget ? 
+        '<span style="color: green; font-weight: bold;">Target Tercapai!</span>' : 
+        'Segera penuhi target harian Anda.';
+
+    summaryDiv.innerHTML = `
+        <h3>Ringkasan Harian</h3>
+        <p>Tugas Selesai: <strong>${completedTasks} / ${totalTasks}</strong></p>
+        <p>Air Minum: <strong>${waterCount} / ${waterTarget}</strong> Gelas (${waterStatus})</p>
+    `;
+}
+
+// =================================================================
+// FUNGSI 1: DARK MODE [TIDAK ADA PERUBAHAN]
+// =================================================================
+function setupDarkMode() {
+    const darkToggle = document.getElementById('darkToggle');
+    const body = document.body;
+
+    if (localStorage.getItem('darkMode') === 'enabled') {
+        body.classList.add('dark-mode');
         darkToggle.innerHTML = '<i class="fas fa-sun"></i>';
     } else {
-        localStorage.setItem('darkMode', 'disabled');
         darkToggle.innerHTML = '<i class="fas fa-moon"></i>';
     }
-});
 
+    darkToggle.addEventListener('click', () => {
+        body.classList.toggle('dark-mode');
+        
+        if (body.classList.contains('dark-mode')) {
+            localStorage.setItem('darkMode', 'enabled');
+            darkToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        } else {
+            localStorage.setItem('darkMode', 'disabled');
+            darkToggle.innerHTML = '<i class="fas fa-moon"></i>';
+        }
+    });
+}
 
 // =================================================================
-// FUNGSI 3: TO-DO LIST
+// FUNGSI 2: TO-DO LIST
 // =================================================================
-const todoList = document.getElementById('todo-list');
-const todoText = document.getElementById('todo-text');
+let tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+const taskList = document.getElementById('taskList');
+const taskInput = document.getElementById('taskInput');
+const addTaskBtn = document.getElementById('addTask');
 
-function addTodo() {
-    const text = todoText.value.trim();
+function saveTasks() {
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+    updateDashboardSummary(); // Panggil update dashboard setiap kali tugas berubah
+}
+
+function renderTasks() {
+    taskList.innerHTML = '';
+    tasks.forEach((task, index) => {
+        const li = document.createElement('li');
+        li.className = task.completed ? 'completed' : '';
+        li.innerHTML = `
+            <span onclick="toggleTask(${index})">${task.text}</span>
+            <div>
+                <button onclick="toggleTask(${index})">${task.completed ? 'Batal' : 'Selesai'}</button>
+                <button onclick="deleteTask(${index})" style="margin-left: 5px; background-color: #e74c3c;">Hapus</button>
+            </div>
+        `;
+        taskList.appendChild(li);
+    });
+}
+
+// PERBAIKAN: Menghubungkan fungsi addTask ke tombol
+function addTask() {
+    const text = taskInput.value.trim();
     if (text === '') return;
 
-    const listItem = document.createElement('li');
-    listItem.innerHTML = `
-        <span>${text}</span>
-        <button onclick="toggleDone(this)">Selesai</button>
-    `;
+    tasks.push({ text: text, completed: false });
+    taskInput.value = '';
+    saveTasks();
+    renderTasks();
+}
 
-    // Tambahkan event listener untuk menandai selesai
-    listItem.querySelector('span').addEventListener('click', () => {
-        listItem.classList.toggle('done');
+function toggleTask(index) {
+    tasks[index].completed = !tasks[index].completed;
+    saveTasks();
+    renderTasks();
+}
+
+function deleteTask(index) {
+    tasks.splice(index, 1);
+    saveTasks();
+    renderTasks();
+}
+
+function setupTodo() {
+    // PERBAIKAN: Menambahkan event listener ke tombol "Tambah"
+    addTaskBtn.addEventListener('click', addTask);
+    
+    // Tambahkan event listener untuk menekan Enter pada input
+    taskInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') addTask();
     });
-
-    todoList.appendChild(listItem);
-    todoText.value = ''; // Kosongkan input
-
-    updateDashboardStats();
-}
-
-function toggleDone(button) {
-    const li = button.parentElement;
-    li.classList.toggle('done');
-    
-    // Hapus tombol "Selesai" dan ganti dengan tombol "Hapus"
-    if (li.classList.contains('done')) {
-        button.textContent = 'Hapus';
-        button.onclick = () => li.remove();
-    } else {
-        button.textContent = 'Selesai';
-        button.onclick = () => toggleDone(button);
-    }
-    
-    updateDashboardStats();
+    renderTasks(); // Muat tugas yang tersimpan saat inisialisasi
 }
 
 
 // =================================================================
-// FUNGSI 4: PENGINGAT MINUM AIR
+// FUNGSI 3: WATER TRACKER
 // =================================================================
+let waterCount = parseInt(localStorage.getItem('waterCount') || '0');
 const waterCountEl = document.getElementById('waterCount');
+const waterTarget = parseInt(document.getElementById('waterTarget').textContent);
+const waterProgress = document.getElementById('waterProgress');
 const addWaterBtn = document.getElementById('addWaterBtn');
-let waterCount = 0;
+const resetWaterBtn = document.getElementById('resetWaterBtn');
 
-addWaterBtn.addEventListener('click', () => {
-    waterCount++;
+// PERBAIKAN: Logika Water Display dan Progress Bar
+function updateWaterDisplay() {
     waterCountEl.textContent = waterCount;
-    updateDashboardStats();
-});
+    
+    // Pastikan progress bar mencapai 100% jika target sudah terpenuhi atau dilewati
+    const percentage = Math.min(100, (waterCount / waterTarget) * 100);
+    waterProgress.style.width = percentage + '%';
+
+    // Perubahan warna progress bar jika target tercapai
+    if (waterCount >= waterTarget) {
+        waterProgress.style.backgroundColor = '#2ecc71'; // Hijau
+    } else {
+        waterProgress.style.backgroundColor = '#4a90e2'; // Biru atau warna default Anda
+    }
+
+    updateDashboardSummary();
+}
+
+function addWater() {
+    waterCount++;
+    localStorage.setItem('waterCount', waterCount);
+    updateWaterDisplay();
+}
+
+function resetWater() {
+    if (confirm("Apakah Anda yakin ingin mereset penghitung air minum hari ini?")) {
+        waterCount = 0;
+        localStorage.setItem('waterCount', '0');
+        updateWaterDisplay();
+    }
+}
+
+function setupWaterTracker() {
+    addWaterBtn.addEventListener('click', addWater);
+    resetWaterBtn.addEventListener('click', resetWater);
+    updateWaterDisplay(); // Muat data saat inisialisasi
+}
+
 
 // =================================================================
-// FUNGSI 5: CUACA (Memerlukan API Key)
+// FUNGSI 4: CUACA
 // =================================================================
-
-// GANTI 'YOUR_API_KEY' dengan kunci API OpenWeatherMap Anda yang sebenarnya
 const API_KEY = 'YOUR_API_KEY'; 
-const weatherDisplay = document.getElementById('weather-display');
+const weatherDisplay = document.getElementById('weatherDisplay');
+const cityInput = document.getElementById('cityInput');
+const fetchWeatherBtn = document.getElementById('fetchWeatherBtn');
 
 async function fetchWeather() {
-    const city = document.getElementById('city-input').value.trim();
-    if (!city) {
-        weatherDisplay.innerHTML = `<p>Mohon masukkan nama kota.</p>`;
-        return;
-    }
-
-    // URL API (Contoh menggunakan OpenWeatherMap - Ganti jika menggunakan layanan lain)
-    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric&lang=id`;
-
-    try {
-        const response = await fetch(url);
-        
-        if (!response.ok) {
-            // Tangani error seperti kota tidak ditemukan
-            weatherDisplay.innerHTML = `<p>Kota "${city}" tidak ditemukan atau terjadi kesalahan.</p>`;
-            return;
-        }
-
-        const data = await response.json();
-        displayWeather(data);
-    } catch (error) {
-        weatherDisplay.innerHTML = `<p>Gagal mengambil data cuaca. Periksa koneksi internet atau kunci API Anda.</p>`;
-    }
-}
-
-function displayWeather(data) {
-    const temp = Math.round(data.main.temp);
-    const description = data.weather[0].description;
-    const city = data.name;
-
-    weatherDisplay.innerHTML = `
-        <h3>Cuaca di ${city}</h3>
-        <p>Suhu: ${temp}°C</p>
-        <p>Kondisi: ${description}</p>
-        <p>Kelembaban: ${data.main.humidity}%</p>
-    `;
-}
-
-// =================================================================
-// FUNGSI 6: UPDATE STATISTIK DASHBOARD
-// =================================================================
-function updateDashboardStats() {
-    const totalTodos = todoList.querySelectorAll('li').length;
-    const completedTodos = todoList.querySelectorAll('li.done').length;
-    const waterGoal = parseInt(document.getElementById('waterTarget').textContent);
-
-    document.getElementById('quick-stats').innerHTML = `
-        <div style="margin-top: 15px;">
-            <h4>Statistik Singkat</h4>
-            <p>Tugas Selesai: ${completedTodos} / ${totalTodos}</p>
-            <p>Air Minum: ${waterCount} / ${waterGoal} Gelas</p>
-        </div>
-    `;
-}
-
-// Panggil saat halaman dimuat
-updateDashboardStats();
+    const city = cityInput.value.trim();
+    if (API_KEY === 'YOUR_API_KEY') {
+        // PERBAIKAN: Pesan error jika API Key belum diatur
+        weatherDisplay.innerHTML = `<p style="color: red; font-weight: bold;">
+            ⚠️ ERROR: API Key Cuaca belum diatur! Ganti 'YOUR_API_
