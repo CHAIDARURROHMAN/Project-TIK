@@ -4,10 +4,15 @@
     <meta charshet="UTF-8">
     <meta name="viwport" content="width=device-width, initial-scale=1.0">
     <Title>LifeSync - Asisten Digital Pribadi</Title>
+    <Link rel="stylesheet" href="style.css">
+    <Link rel="stylesheet" hrefl="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   </head>
   <body>
+    <div class="app-container">
     <div class="toggle-container">
-      <button id="darkToggle" class="toggle-btn">🌑</button>
+      <button id="darkToggle" class="toggle-btn">
+        <i class="fas fa-moon"></i>
+      </button>
     </div>
 
     <header>
@@ -22,16 +27,40 @@
 
     <main>
       <section id="dashboard" class="tab-content active">
-        <h2 id="greeting"></h2>
+        <h2 id="greeting">Selamat datang di LiftSinc</h2>
         <p id="date"></p>
+        <div id="summary"></div>
       </section>
 
       <section id="todo" class="tab-content">
-        <h2>To-Do List</h2>
+        <h2>Daftar Tugas</h2>
+        <div class="todo-controls">
         <input type="text" id="taksInput" placeholder="Tulis tugas...">
         <button id="addTask">Tambah</button>
+        </div>
         <ul id="taksList"></ul>
       </section>
+
+      <section id="water" class="tab-content">
+        <h2>Pengingat Minum Air</h2>
+        <p>Target Harian: <span id="waterTarget">8</span>Gelas</p>
+        <p>Sudah Minum: <span id="waterCount">0</span>Gelas</p>
+        <button id="addWaterBtn">Tambahkan Gelas (250ml)</button>
+      </section>
+
+      <section id="weather" class="tab-content">
+        <h2>Cek Cuaca</h2>
+        <div class="Weather-controls"
+          <input type="text" id="cityInput" placeholder="Masukkan Nama Kota">
+          <button id="fetchWeatherBtn">Cari Cuaca</button>
+        </div>
+        <div id="weatherDisplay">
+          <p>Masukkan nama kota lalu klik 'Cari Cuaca'.</p>
+        </div>
+      </section>
     </main>
+    </div>
+
+    <script src="script.js"></script>
   </body>
 </html>
