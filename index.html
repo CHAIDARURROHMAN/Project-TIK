@@ -7,7 +7,7 @@
   </head>
   <body>
     <div class="toggle-container">
-      <button id="darkToggle" class="toggle-btn">🩲</button>
+      <button id="darkToggle" class="toggle-btn">🌑</button>
     </div>
 
     <header>
@@ -19,5 +19,19 @@
         <button class="tab-button" data-target="wheater">Cuaca</button>
       </nav>
     </header>
+
+    <main>
+      <section id="dashboard" class="tab-content active">
+        <h2 id="greeting"></h2>
+        <p id="date"></p>
+      </section>
+
+      <section id="todo" class="tab-content">
+        <h2>To-Do List</h2>
+        <input type="text" id="taksInput" placeholder="Tulis tugas...">
+        <button id="addTask">Tambah</button>
+        <ul id="taksList"></ul>
+      </section>
+    </main>
   </body>
 </html>
