@@ -12,7 +12,7 @@ function initApp() {
     
     // 2. Inisialisasi Navigasi dan Dashboard
     setupNavigation();
-    updateDashboardInfo();
+    updateDashboardInfo(); // Panggil ini saat awal memuat
     
     // 3. Setup Fitur To-Do
     setupTodo();
@@ -42,8 +42,10 @@ function setupNavigation() {
             contents.forEach(c => c.classList.remove('active'));
             document.getElementById(targetId).classList.add('active');
 
+            // PERBAIKAN: Panggil updateDashboardInfo() lengkap
+            // agar Sapaan dan Tanggal juga muncul kembali.
             if (targetId === 'dashboard') {
-                updateDashboardSummary();
+                updateDashboardInfo();
             }
         });
     });
@@ -55,7 +57,8 @@ function updateDashboardInfo() {
     const dateString = today.toLocaleDateString('id-ID', options);
     
     // PERBAIKAN: Ambil elemen langsung di sini
-    document.getElementById('date').textContent = dateString;
+    const dateEl = document.getElementById('date');
+    if (dateEl) dateEl.textContent = dateString;
 
     // Greeting berdasarkan waktu
     const hour = today.getHours();
@@ -69,9 +72,12 @@ function updateDashboardInfo() {
     } else {
         greeting = "Selamat Malam";
     }
+    
     // PERBAIKAN: Ambil elemen langsung di sini
-    document.getElementById('greeting').textContent = `${greeting} di LifeSync!`;
+    const greetingEl = document.getElementById('greeting');
+    if (greetingEl) greetingEl.textContent = `${greeting} di LifeSync!`;
 
+    // Panggil summary setelah info utama di-set
     updateDashboardSummary();
 }
 
@@ -85,6 +91,7 @@ function updateDashboardSummary() {
     const completedTasks = tasks.filter(task => task.completed).length;
 
     const waterCount = parseInt(localStorage.getItem('waterCount') || '0');
+    
     // PERBAIKAN: Ambil elemen target di sini agar lebih aman
     const waterTargetEl = document.getElementById('waterTarget');
     const waterTarget = waterTargetEl ? parseInt(waterTargetEl.textContent) : 8;
@@ -129,7 +136,7 @@ function setupDarkMode() {
 // =================================================================
 // FUNGSI 2: TO-DO LIST
 // =================================================================
-// Variabel data (tasks) boleh tetap global karena tidak bergantung pada DOM
+// Variabel data (tasks) boleh tetap global
 let tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
 
 function saveTasks() {
@@ -145,30 +152,30 @@ function renderTasks() {
 
     taskList.innerHTML = ''; // Kosongkan list
     
+    if (tasks.length === 0) {
+        taskList.innerHTML = "<li><em>Belum ada tugas.</em></li>";
+        return;
+    }
+
     tasks.forEach((task, index) => {
         const li = document.createElement('li');
         li.className = task.completed ? 'completed' : '';
         
-        // Buat elemen span untuk teks
         const span = document.createElement('span');
         span.textContent = task.text;
 
-        // Buat div untuk tombol
         const div = document.createElement('div');
         
-        // Buat tombol Toggle
         const toggleBtn = document.createElement('button');
         toggleBtn.textContent = task.completed ? 'Batal' : 'Selesai';
-        // PERBAIKAN: Gunakan addEventListener, bukan onclick=""
+        // PERBAIKAN: Gunakan addEventListener
         toggleBtn.addEventListener('click', () => toggleTask(index));
         
-        // Buat tombol Hapus
         const deleteBtn = document.createElement('button');
         deleteBtn.textContent = 'Hapus';
-        // PERBAIKAN: Gunakan addEventListener, bukan onclick=""
+        // PERBAIKAN: Gunakan addEventListener
         deleteBtn.addEventListener('click', () => deleteTask(index));
 
-        // Masukkan tombol ke div, lalu masukkan span dan div ke li
         div.appendChild(toggleBtn);
         div.appendChild(deleteBtn);
         li.appendChild(span);
@@ -209,166 +216,3 @@ function setupTodo() {
     // PERBAIKAN: Pindahkan selector elemen ke DALAM fungsi
     const taskInput = document.getElementById('taskInput');
     const addTaskBtn = document.getElementById('addTask');
-
-    if (addTaskBtn) {
-        addTaskBtn.addEventListener('click', addTask);
-    }
-    if (taskInput) {
-        taskInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') addTask();
-        });
-    }
-    renderTasks(); // Muat tugas yang tersimpan
-}
-
-
-// =================================================================
-// FUNGSI 3: WATER TRACKER
-// =================================================================
-// Variabel data (waterCount) boleh tetap global
-let waterCount = parseInt(localStorage.getItem('waterCount') || '0');
-
-function updateWaterDisplay() {
-    // PERBAIKAN: Ambil elemen di sini
-    const waterCountEl = document.getElementById('waterCount');
-    const waterTargetEl = document.getElementById('waterTarget');
-    const waterProgress = document.getElementById('waterProgress');
-
-    if (!waterCountEl || !waterTargetEl || !waterProgress) return;
-
-    const waterTarget = parseInt(waterTargetEl.textContent);
-    waterCountEl.textContent = waterCount;
-    
-    const percentage = (waterCount / waterTarget) * 100;
-
-    // --- PERBAIKAN FEEDBACK BUG 3 ---
-    if (percentage >= 100) {
-        waterProgress.style.width = '100%';
-        waterProgress.style.backgroundColor = '#FFD700'; // Warna emas saat target tercapai
-    } else {
-        waterProgress.style.width = percentage + '%';
-        waterProgress.style.backgroundColor = '#2ECC71'; // Warna hijau normal
-    }
-    // --- AKHIR PERBAIKAN ---
-
-    updateDashboardSummary();
-}
-
-function addWater() {
-    waterCount++;
-    localStorage.setItem('waterCount', waterCount);
-    
-    // --- PERBAIKAN FEEDBACK BUG 3 ---
-    // Cek target SETELAH menambah air
-    const waterTarget = parseInt(document.getElementById('waterTarget').textContent);
-    if (waterCount === waterTarget) {
-        alert('Selamat! Anda telah mencapai target minum air harian.');
-    }
-    // --- AKHIR PERBAIKAN ---
-
-    updateWaterDisplay(); // Update tampilan
-}
-
-function resetWater() {
-    if (confirm("Apakah Anda yakin ingin mereset penghitung air minum hari ini?")) {
-        waterCount = 0;
-        localStorage.setItem('waterCount', '0');
-        updateWaterDisplay();
-    }
-}
-
-function setupWaterTracker() {
-    // PERBAIKAN: Pindahkan selector elemen ke DALAM fungsi
-    const addWaterBtn = document.getElementById('addWaterBtn');
-    const resetWaterBtn = document.getElementById('resetWaterBtn');
-
-    if (addWaterBtn) addWaterBtn.addEventListener('click', addWater);
-    if (resetWaterBtn) resetWaterBtn.addEventListener('click', resetWater);
-    
-    updateWaterDisplay(); // Muat data saat inisialisasi
-}
-
-
-// =================================================================
-// FUNGSI 4: CUACA (Membutuhkan API Key)
-// =================================================================
-// PERINGATAN PENTING: GANTI 'YOUR_API_KEY' DENGAN KUNCI API ASLI
-// Dapatkan di: https://openweathermap.org/
-const API_KEY = 'YOUR_API_KEY'; 
-
-async function fetchWeather() {
-    // PERBAIKAN: Pindahkan selector elemen ke DALAM fungsi
-    const cityInput = document.getElementById('cityInput');
-    const weatherDisplay = document.getElementById('weatherDisplay');
-    if (!cityInput || !weatherDisplay) return;
-
-    const city = cityInput.value.trim();
-    if (!city) {
-        weatherDisplay.innerHTML = `<p>Mohon masukkan nama kota.</p>`;
-        return;
-    }
-
-    // Peringatan jika API Key belum diganti
-    if (API_KEY === 'YOUR_API_KEY') {
-        weatherDisplay.innerHTML = `<p>PERINGATAN: Harap ganti 'YOUR_API_KEY' di dalam file script.js dengan API Key asli dari OpenWeatherMap.</p>`;
-        return;
-    }
-
-    weatherDisplay.innerHTML = `<p>Memuat cuaca untuk ${city}...</p>`;
-    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric&lang=id`;
-
-    try {
-        const response = await fetch(url);
-        
-        if (!response.ok) {
-            const errorData = await response.json();
-            if (response.status === 401) {
-                weatherDisplay.innerHTML = `<p>Gagal mengambil data: API Key tidak valid. Silakan periksa kunci Anda.</p>`;
-            } else {
-                weatherDisplay.innerHTML = `<p>Kota "${city}" tidak ditemukan. (${errorData.message})</p>`;
-            }
-            return;
-        }
-
-        const data = await response.json();
-        displayWeather(data);
-    } catch (error) {
-        weatherDisplay.innerHTML = `<p>Gagal mengambil data cuaca. Periksa koneksi internet Anda.</p>`;
-        console.error("Weather fetch error:", error);
-    }
-}
-
-function displayWeather(data) {
-    // PERBAIKAN: Ambil elemen di sini
-    const weatherDisplay = document.getElementById('weatherDisplay');
-    if (!weatherDisplay) return;
-
-    const temp = Math.round(data.main.temp);
-    const feelsLike = Math.round(data.main.feels_like);
-    const description = data.weather[0].description;
-    const iconCode = data.weather[0].icon;
-
-    weatherDisplay.innerHTML = `
-        <div style="display: flex; align-items: center; justify-content: center; gap: 20px;">
-            <img src="http://openweathermap.org/img/wn/${iconCode}@2x.png" alt="${description}" style="width: 80px;">
-            <div>
-                <h3>Cuaca di ${data.name}</h3>
-                <p style="font-size: 2em; font-weight: bold;">${temp}°C</p>
-                <p style="text-transform: capitalize;">Kondisi: ${description}</p>
-                <p>Terasa seperti: ${feelsLike}°C</p>
-                <p>Kelembaban: ${data.main.humidity}%</p>
-            </div>
-        </div>
-    `;
-}
-
-function setupWeather() {
-    // PERBAIKAN: Pindahkan selector elemen ke DALAM fungsi
-    const cityInput = document.getElementById('cityInput');
-    const fetchWeatherBtn = document.getElementById('fetchWeatherBtn');
-    
-    if (fetchWeatherBtn) fetchWeatherBtn.addEventListener('click', fetchWeather);
-    if (cityInput) cityInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') fetchWeather();
-    });
-}
