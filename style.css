@@ -1,8 +1,4 @@
-/* =================================================================
-   CSS Custom Properties (Themes)
-   ================================================================= */
 :root {
-    /* Light Mode */
     --bg-color: #f0f2f5;
     --text-color: #333;
     --header-bg: #4a90e2; /* Biru terang */
@@ -17,7 +13,6 @@
 }
 
 body.dark-mode {
-    /* Dark Mode */
     --bg-color: #121212;
     --text-color: #e0e0e0;
     --header-bg: #1f1f1f;
@@ -31,9 +26,6 @@ body.dark-mode {
     --primary-btn-text: #121212;
 }
 
-/* =================================================================
-   BASE STYLES
-   ================================================================= */
 * {
     margin: 0;
     padding: 0;
@@ -58,7 +50,6 @@ body {
     overflow: hidden;
 }
 
-/* HEADER & NAVIGASI */
 header {
     background-color: var(--header-bg);
     color: white;
@@ -92,7 +83,7 @@ nav {
 .tab-button.active {
     color: var(--nav-btn-active-bg);
     border-bottom: 3px solid var(--nav-btn-active-bg);
-    /* Ganti warna teks aktif jika di Light Mode */
+    /* Ganti warna text di Light Mode*/
     color: var(--nav-btn-active-bg);
 }
 
@@ -100,7 +91,6 @@ body.dark-mode .tab-button.active {
     color: var(--nav-btn-active-bg);
 }
 
-/* KONTEN UTAMA */
 main {
     padding: 30px;
 }
@@ -121,9 +111,6 @@ h2 {
     color: var(--primary-btn);
 }
 
-/* =================================================================
-   DARK MODE TOGGLE
-   ================================================================= */
 .toggle-container {
     position: absolute;
     top: 25px;
@@ -142,9 +129,6 @@ h2 {
     transition: all 0.3s;
 }
 
-/* =================================================================
-   TO-DO & CONTROLS
-   ================================================================= */
 .todo-controls, .weather-controls {
     display: flex;
     gap: 10px;
@@ -187,9 +171,6 @@ input[type="text"] {
     color: #888;
 }
 
-/* =================================================================
-   WATER TRACKER
-   ================================================================= */
 .water-status {
     margin: 15px 0;
 }
@@ -199,7 +180,6 @@ input[type="text"] {
     margin-bottom: 5px;
 }
 
-/* Ini adalah kontainer luar untuk progress bar */
 .progress-bar-container {
     height: 20px;
     background-color: #ddd;
@@ -208,17 +188,13 @@ input[type="text"] {
     margin-top: 10px;
 }
 
-/* Ini adalah bar di dalamnya yang akan membesar */
 #waterProgress {
-    width: 0%; /* Diatur oleh JS */
+    width: 0%;
     height: 100%;
     background-color: #2ECC71; /* Hijau */
     transition: width 0.5s ease-in-out, background-color 0.5s;
 }
 
-/* =================================================================
-   WEATHER DISPLAY
-   ================================================================= */
 #weatherDisplay {
     margin-top: 20px;
     padding: 15px;
