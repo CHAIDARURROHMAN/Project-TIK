@@ -1,92 +1,224 @@
-const darkToggle = document.getElementById("darkToggle");
-if (localStorage.getItem("darkMode") === "true") {
-  document.body.classList.add("dark");
-  darkToggle.textContent = "☀️";
-}
-darkToggle.onclick = () => {
-  document.body.classList.toggle("dark");
-  const dark = document.body.classList.contains("dark");
-  darkToggle.textContent = dark ? "☀️" : "";
-  localStorage.setItem("darkMode", dark);
-};
-
-const tabs = document.querySelectorAll(".tab-btn");
+// ========== Inisialisasi & Variabel Global ==========
+const tabs = document.querySelectorAll(".tab-button");
 const contents = document.querySelectorAll(".tab-content");
-tabs.forEach(btn => {
-  btn.addEventListener("click", () => {
-    tabs.forEach(b => b.classList.remove("active"));
-    contents.forEach(c => c.classList.remove("active"));
-    btn.classList.add("active");
-    document.getElementById(btn.dataset.target).classList.add("active");
-  });
-});
-
+const body = document.body;
+const darkToggle = document.getElementById("darkToggle");
 const greeting = document.getElementById("greeting");
-const dateDisplay = document.getElementById("date");
-const now = new Date();
-const hour = now.getHours();
-let greet = hour < 12 ? "Selamat pagi!" : hour < 18 ? "Selamat siang!" : "Selamat malam!";
-greeting.textContent = greet;
-dateDisplay.textContent = now.toLocaleDateString("id-ID", {
-  weekday: "long", year: "numeric", month: "long", day: "numeric"
+const dateEl = document.getElementById("date");
+
+// To-do
+const taskInput = document.getElementById("taskInput");
+const addTaskBtn = document.getElementById("addTask");
+const taskList = document.getElementById("taskList");
+
+// Water reminder
+const waterTarget = 8;
+const waterCountEl = document.getElementById("waterCount");
+const waterProgress = document.getElementById("waterProgress");
+const addWaterBtn = document.getElementById("addWaterBtn");
+const resetWaterBtn = document.getElementById("resetWaterBtn");
+
+// Weather
+const cityInput = document.getElementById("cityInput");
+const fetchWeatherBtn = document.getElementById("fetchWeatherBtn");
+const weatherDisplay = document.getElementById("weatherDisplay");
+
+// API key cuaca (ganti dengan key kamu)
+const OWM_API_KEY = "YOUR_API_KEY_HERE"; // contoh: "4f7a2f1a6e8e9abc123456789"
+
+// ========== Mode Gelap (Dark Mode) ==========
+function loadTheme() {
+    const darkMode = localStorage.getItem("darkMode");
+    if (darkMode === "enabled") {
+        body.classList.add("dark-mode");
+    }
+}
+
+function toggleDarkMode() {
+    body.classList.toggle("dark-mode");
+    if (body.classList.contains("dark-mode")) {
+        localStorage.setItem("darkMode", "enabled");
+    } else {
+        localStorage.setItem("darkMode", "disabled");
+    }
+}
+
+darkToggle.addEventListener("click", toggleDarkMode);
+loadTheme();
+
+// ========== Navigasi Tab ==========
+tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+        const target = tab.getAttribute("data-target");
+
+        tabs.forEach(t => t.classList.remove("active"));
+        tab.classList.add("active");
+
+        contents.forEach(c => c.classList.remove("active"));
+        document.getElementById(target).classList.add("active");
+    });
 });
 
-const taskInput = document.getElementById("taskInput");
-const taskList = document.getElementById("taskList");
-document.getElementById("addTask").onclick = () => {
-  const text = taskInput.value.trim();
-  if (!text) return alert("Tulis tugas dulu!");
-  addTask(text, false);
-  saveTasks();
-  taskInput.value = "";
-};
-window.onload = () => {
-  const saved = JSON.parse(localStorage.getItem("tasks")) || [];
-  saved.forEach(t => addTask(t.text, t.done));
-};
-function addTask(text, done) {
-  const li = document.createElement("li");
-  li.textContent = text;
-  if (done) li.classList.add("completed");
-  li.onclick = () => { li.classList.toggle("completed"); saveTasks(); };
-  taskList.appendChild(li);
+// ========== Greeting & Tanggal ==========
+function updateGreeting() {
+    const now = new Date();
+    const hour = now.getHours();
+    const dateStr = now.toLocaleDateString("id-ID", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+    });
+
+    let greet = "Selamat datang";
+    if (hour >= 5 && hour < 12) greet = "Selamat pagi";
+    else if (hour >= 12 && hour < 15) greet = "Selamat siang";
+    else if (hour >= 15 && hour < 18) greet = "Selamat sore";
+    else greet = "Selamat malam";
+
+    greeting.textContent = `${greet}, di LifeSync!`;
+    dateEl.textContent = dateStr;
 }
-function saveTasks() {
-  const tasks = [...taskList.children].map(li => ({
-    text: li.textContent,
-    done: li.classList.contains("completed")
-  }));
-  localStorage.setItem("tasks", JSON.stringify(tasks));
+updateGreeting();
+
+// ========== To-Do List ==========
+function loadTasks() {
+    const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    taskList.innerHTML = "";
+    tasks.forEach((task, index) => {
+        const li = document.createElement("li");
+        const span = document.createElement("span");
+        span.textContent = task.text;
+        if (task.completed) li.classList.add("completed");
+
+        span.addEventListener("click", () => toggleTask(index));
+        const delBtn = document.createElement("button");
+        delBtn.textContent = "Hapus";
+        delBtn.style.background = "#ff4d4d";
+        delBtn.style.border = "none";
+        delBtn.style.color = "white";
+        delBtn.style.padding = "5px 10px";
+        delBtn.style.borderRadius = "5px";
+        delBtn.style.cursor = "pointer";
+        delBtn.addEventListener("click", () => deleteTask(index));
+
+        li.appendChild(span);
+        li.appendChild(delBtn);
+        taskList.appendChild(li);
+    });
 }
 
-const startReminder = document.getElementById("startReminder");
-startReminder.onclick = () => {
-  const interval = parseInt(document.getElementById("interval").value);
-  if (!interval || interval <= 0) return alert("Masukkan interval menit yang valid!");
-  alert(`Pengingat akan muncul setiap ${interval} menit.`);
-  setInterval(() => {
-    alert("💧 Saatnya minum air!");
-  }, interval * 60000);
-};
+function saveTasks(tasks) {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+}
 
-document.getElementById("checkWeather").onclick = async () => {
-  const city = document.getElementById("city").value;
-  const result = document.getElementById("weatherResult");
-  const apiKey = "MASUKKAN_API_KEY_ANDA"; // Ganti dengan API key OpenWeatherMap kamu
-  if (!city) return alert("Masukkan nama kota!");
-  try {
-    const res = await fetch(
-      `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric&lang=id`
-    );
-    const data = await res.json();
-    if (data.cod !== 200) return result.innerHTML = `<p>Kota tidak ditemukan!</p>`;
-    result.innerHTML = `
-      <h3>${data.name}</h3>
-      <p>${data.weather[0].description}</p>
-      <p>🌡️ Suhu: ${data.main.temp}°C</p>
-    `;
-  } catch (e) {
-    result.innerHTML = `<p>Terjadi kesalahan mengambil data.</p>`;
-  }
-};
+function addTask() {
+    const text = taskInput.value.trim();
+    if (!text) return;
+    const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    tasks.push({ text, completed: false });
+    saveTasks(tasks);
+    taskInput.value = "";
+    loadTasks();
+}
 
+function toggleTask(index) {
+    const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    tasks[index].completed = !tasks[index].completed;
+    saveTasks(tasks);
+    loadTasks();
+}
+
+function deleteTask(index) {
+    const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    tasks.splice(index, 1);
+    saveTasks(tasks);
+    loadTasks();
+}
+
+addTaskBtn.addEventListener("click", addTask);
+taskInput.addEventListener("keypress", e => {
+    if (e.key === "Enter") addTask();
+});
+loadTasks();
+
+// ========== Pengingat Minum Air ==========
+function loadWaterData() {
+    const saved = JSON.parse(localStorage.getItem("waterData")) || { count: 0, date: new Date().toDateString() };
+    const today = new Date().toDateString();
+    if (saved.date !== today) {
+        saved.count = 0;
+        saved.date = today;
+        saveWaterData(saved);
+    }
+    return saved;
+}
+
+function saveWaterData(data) {
+    localStorage.setItem("waterData", JSON.stringify(data));
+}
+
+function updateWaterUI() {
+    const data = loadWaterData();
+    const percent = (data.count / waterTarget) * 100;
+    waterCountEl.textContent = data.count;
+    waterProgress.style.width = `${Math.min(percent, 100)}%`;
+
+    if (percent >= 100) {
+        waterProgress.style.backgroundColor = "#00c853"; // hijau terang
+    } else {
+        waterProgress.style.backgroundColor = "#2ECC71";
+    }
+}
+
+function addWater() {
+    const data = loadWaterData();
+    if (data.count < waterTarget) {
+        data.count += 1;
+        saveWaterData(data);
+        updateWaterUI();
+    } else {
+        alert("Target harian sudah tercapai! 🥳");
+    }
+}
+
+function resetWater() {
+    const data = { count: 0, date: new Date().toDateString() };
+    saveWaterData(data);
+    updateWaterUI();
+}
+
+addWaterBtn.addEventListener("click", addWater);
+resetWaterBtn.addEventListener("click", resetWater);
+updateWaterUI();
+
+// ========== Cuaca ==========
+async function fetchWeather() {
+    const city = cityInput.value.trim();
+    if (!city) return;
+
+    weatherDisplay.innerHTML = "<p>Mengambil data cuaca...</p>";
+    try {
+        const response = await fetch(
+            `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${OWM_API_KEY}&units=metric&lang=id`
+        );
+
+        if (!response.ok) throw new Error("Kota tidak ditemukan");
+
+        const data = await response.json();
+        weatherDisplay.innerHTML = `
+            <h3>${data.name}, ${data.sys.country}</h3>
+            <p><b>${data.weather[0].description.toUpperCase()}</b></p>
+            <p>Suhu: ${data.main.temp}°C</p>
+            <p>Kelembapan: ${data.main.humidity}%</p>
+            <p>Kecepatan Angin: ${data.wind.speed} m/s</p>
+        `;
+    } catch (err) {
+        weatherDisplay.innerHTML = `<p style="color:red;">${err.message}</p>`;
+    }
+}
+
+fetchWeatherBtn.addEventListener("click", fetchWeather);
+cityInput.addEventListener("keypress", e => {
+    if (e.key === "Enter") fetchWeather();
+});
