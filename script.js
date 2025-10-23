@@ -6,7 +6,7 @@ if (localStorage.getItem("darkMode") === "true") {
 darkToggle.onclick = () => {
   document.body.classList.toggle("dark");
   const dark = document.body.classList.contains("dark");
-  darkToggle.textContent = dark ? "☀️" : "🌙";
+  darkToggle.textContent = dark ? "☀️" : "";
   localStorage.setItem("darkMode", dark);
 };
 
