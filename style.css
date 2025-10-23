@@ -1,204 +1,66 @@
-:root {
-    --bg-color: #f0f2f5;
-    --text-color: #333;
-    --header-bg: #4a90e2; /* Biru terang */
-    --nav-bg: #4a90e2;
-    --nav-btn-color: #ffffff;
-    --nav-btn-active-bg: #ffffff;
-    --nav-btn-active-color: #4a90e2;
-    --card-bg: #ffffff;
-    --border-color: #e0e0e0;
-    --primary-btn: #4a90e2;
-    --primary-btn-text: white;
-}
-
-body.dark-mode {
-    --bg-color: #121212;
-    --text-color: #e0e0e0;
-    --header-bg: #1f1f1f;
-    --nav-bg: #1f1f1f;
-    --nav-btn-color: #e0e0e0;
-    --nav-btn-active-bg: #00bcd4; /* Cyan */
-    --nav-btn-active-color: #121212;
-    --card-bg: #1e1e1e;
-    --border-color: #333;
-    --primary-btn: #00bcd4;
-    --primary-btn-text: #121212;
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-}
-
-body {
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    transition: background-color 0.3s, color 0.3s;
-    min-height: 100vh;
-    padding: 20px;
-}
-
-.app-container {
-    max-width: 800px;
-    margin: 0 auto;
-    background: var(--card-bg);
-    border-radius: 15px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-}
-
-header {
-    background-color: var(--header-bg);
-    color: white;
-    padding: 20px 20px 0;
+.dashboard-hero {
     text-align: center;
+    margin-bottom: 30px;
 }
 
-header h1 {
-    margin-bottom: 10px;
+.subtitle {
+    font-size: 1.1em;
+    color: var(--text-color);
+    opacity: 0.8;
 }
 
-nav {
+.dashboard-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.summary-card {
     display: flex;
-    justify-content: center;
+    align-items: center;
     gap: 15px;
-    padding-top: 10px;
-}
-
-.tab-button {
-    padding: 10px 15px;
-    border: none;
-    background: none;
-    color: var(--nav-btn-color);
-    cursor: pointer;
-    font-size: 1em;
-    font-weight: 500;
-    transition: color 0.3s;
-    border-bottom: 3px solid transparent;
-}
-
-.tab-button.active {
-    color: var(--nav-btn-active-bg);
-    border-bottom: 3px solid var(--nav-btn-active-bg);
-    /* Ganti warna text di Light Mode*/
-    color: var(--nav-btn-active-bg);
-}
-
-body.dark-mode .tab-button.active {
-    color: var(--nav-btn-active-bg);
-}
-
-main {
-    padding: 30px;
-}
-
-.tab-content {
-    display: none;
-    border: 1px solid var(--border-color);
     padding: 20px;
-    border-radius: 10px;
+    border-radius: 15px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    transition: transform 0.3s, box-shadow 0.3s;
 }
 
-.tab-content.active {
-    display: block;
+.summary-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.15);
 }
 
-h2 {
-    margin-bottom: 15px;
+.summary-card i {
+    font-size: 2em;
     color: var(--primary-btn);
 }
 
-.toggle-container {
-    position: absolute;
-    top: 25px;
-    right: 30px;
-}
-
-.toggle-btn {
-    background: var(--card-bg);
-    color: var(--text-color);
-    border: 1px solid var(--border-color);
-    border-radius: 50%;
-    width: 45px;
-    height: 45px;
-    font-size: 1.2em;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.todo-controls, .weather-controls {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-input[type="text"] {
-    flex-grow: 1;
-    padding: 10px;
-    border: 1px solid var(--border-color);
-    border-radius: 5px;
-    background-color: var(--card-bg);
-    color: var(--text-color);
-}
-
-#addTask, #fetchWeatherBtn, #addWaterBtn, #resetWaterBtn {
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    background-color: var(--primary-btn);
-    color: var(--primary-btn-text);
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-#taskList {
-    list-style: none;
-}
-
-#taskList li {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 0;
-    border-bottom: 1px dashed var(--border-color);
-}
-
-#taskList li.completed span {
-    text-decoration: line-through;
-    color: #888;
-}
-
-.water-status {
-    margin: 15px 0;
-}
-
-.water-status p {
+.summary-info h3 {
+    margin: 0;
     font-size: 1.1em;
-    margin-bottom: 5px;
+    color: var(--primary-btn);
 }
 
-.progress-bar-container {
-    height: 20px;
-    background-color: #ddd;
-    border-radius: 10px;
-    overflow: hidden;
-    margin-top: 10px;
+.todo-card i { color: #ffb300; }
+.water-card i { color: #00bcd4; }
+.weather-card i { color: #4a90e2; }
+
+.animate-fade {
+    animation: fadeIn 1.5s ease;
 }
 
-#waterProgress {
-    width: 0%;
-    height: 100%;
-    background-color: #2ECC71; /* Hijau */
-    transition: width 0.5s ease-in-out, background-color 0.5s;
+.animate-slide {
+    animation: slideDown 1.2s ease;
 }
 
-#weatherDisplay {
-    margin-top: 20px;
-    padding: 15px;
-    border: 1px solid var(--border-color);
-    border-radius: 5px;
-    background-color: var(--card-bg);
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
 }
