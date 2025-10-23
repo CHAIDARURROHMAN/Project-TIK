@@ -222,3 +222,49 @@ fetchWeatherBtn.addEventListener("click", fetchWeather);
 cityInput.addEventListener("keypress", e => {
     if (e.key === "Enter") fetchWeather();
 });
+
+// ========== Update Ringkasan Dashboard ==========
+function updateDashboardSummary() {
+    // Update jumlah tugas belum selesai
+    const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    const incomplete = tasks.filter(t => !t.completed).length;
+    document.getElementById("todoCount").textContent = incomplete;
+
+    // Update ringkasan air
+    const waterData = JSON.parse(localStorage.getItem("waterData")) || { count: 0 };
+    document.getElementById("waterSummary").textContent = waterData.count;
+
+    // Update cuaca terakhir (jika sudah pernah dicari)
+    const lastWeather = localStorage.getItem("lastWeather");
+    document.getElementById("weatherSummary").textContent = lastWeather || "Belum ada data";
+}
+
+// Simpan cuaca terakhir di localStorage setiap kali fetch berhasil
+async function fetchWeather() {
+    const city = cityInput.value.trim();
+    if (!city) return;
+    weatherDisplay.innerHTML = "<p>Mengambil data cuaca...</p>";
+    try {
+        const response = await fetch(
+            `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${OWM_API_KEY}&units=metric&lang=id`
+        );
+        if (!response.ok) throw new Error("Kota tidak ditemukan");
+        const data = await response.json();
+        const desc = data.weather[0].description;
+        localStorage.setItem("lastWeather", `${desc}, ${data.main.temp}°C`);
+        weatherDisplay.innerHTML = `
+            <h3>${data.name}, ${data.sys.country}</h3>
+            <p><b>${desc.toUpperCase()}</b></p>
+            <p>Suhu: ${data.main.temp}°C</p>
+            <p>Kelembapan: ${data.main.humidity}%</p>
+            <p>Kecepatan Angin: ${data.wind.speed} m/s</p>
+        `;
+        updateDashboardSummary();
+    } catch (err) {
+        weatherDisplay.innerHTML = `<p style="color:red;">${err.message}</p>`;
+    }
+}
+
+// Jalankan saat halaman dibuka
+updateDashboardSummary();
+
