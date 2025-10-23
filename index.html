@@ -17,21 +17,48 @@
         </div>
 
         <header>
-            <h1>LifeSync</h1>
+            <h1>🌐 LifeSync</h1>
             <nav>
-                <button class="tab-button active" data-target="dashboard">Dashboard</button>
-                <button class="tab-button" data-target="todo">To-Do</button>
-                <button class="tab-button" data-target="water">Minum Air</button>
-                <button class="tab-button" data-target="weather">Cuaca</button>
+                <button class="tab-button active" data-target="dashboard"><i class="fas fa-home"></i> Dashboard</button>
+                <button class="tab-button" data-target="todo"><i class="fas fa-list-check"></i> To-Do</button>
+                <button class="tab-button" data-target="water"><i class="fas fa-tint"></i> Minum Air</button>
+                <button class="tab-button" data-target="weather"><i class="fas fa-cloud-sun"></i> Cuaca</button>
             </nav>
         </header>
 
         <main>
             <section id="dashboard" class="tab-content active">
-                <h2 id="greeting">Selamat Datang di LifeSync</h2>
-                <p id="date"></p>
-                <div id="summary">
+                <div class="dashboard-hero animate-slide">
+                    <h2 id="greeting">Selamat Datang di LifeSync</h2>
+                    <p id="date"></p>
+                    <p class="subtitle">Sinkronkan hidupmu dalam satu tempat ✨</p>
+                </div>
+
+                <div id="summary" class="dashboard-summary animate-fade">
+                    <div class="summary-card todo-card">
+                        <i class="fas fa-tasks"></i>
+                        <div class="summary-info">
+                            <h3>Tugas</h3>
+                            <p><span id="todoCount">0</span> Tugas belum selesai</p>
+                        </div>
                     </div>
+
+                    <div class="summary-card water-card">
+                        <i class="fas fa-glass-water"></i>
+                        <div class="summary-info">
+                            <h3>Air</h3>
+                            <p><span id="waterSummary">0</span>/8 Gelas diminum</p>
+                        </div>
+                    </div>
+
+                    <div class="summary-card weather-card">
+                        <i class="fas fa-cloud"></i>
+                        <div class="summary-info">
+                            <h3>Cuaca</h3>
+                            <p id="weatherSummary">-</p>
+                        </div>
+                    </div>
+                </div>
             </section>
 
             <section id="todo" class="tab-content">
@@ -40,8 +67,7 @@
                     <input type="text" id="taskInput" placeholder="Tulis tugas baru...">
                     <button id="addTask">Tambah</button>
                 </div>
-                <ul id="taskList">
-                    </ul>
+                <ul id="taskList"></ul>
             </section>
 
             <section id="water" class="tab-content">
@@ -50,7 +76,7 @@
                 <div class="water-status">
                     <p>Sudah Minum: <span id="waterCount">0</span> Gelas</p>
                     <div class="progress-bar-container">
-                         <div id="waterProgress" class="progress-bar"></div>
+                        <div id="waterProgress" class="progress-bar"></div>
                     </div>
                 </div>
                 <button id="addWaterBtn">Tambahkan 1 Gelas</button>
