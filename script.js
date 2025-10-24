@@ -84,54 +84,48 @@ addTask.addEventListener("click", () => {
 renderTasks();
 
 // === WATER REMINDER ===
-// (Variabel lama Anda tetap di sini)
 let waterData = JSON.parse(localStorage.getItem("waterData")) || { count: 0, lastDrink: null };
 const waterCount = document.getElementById("waterCount");
 const progress = document.getElementById("waterProgress");
 
-// --- PERUBAHAN DIMULAI ---
-// 1. Siapkan file audio Anda (misal: 'alert.mp3') di folder yang sama
-//    Anda bisa cari "notification sound mp3" di internet.
-const waterAlertSound = new Audio('alert.mp3'); // Ganti 'alert.mp3' jika nama file Anda berbeda
-// --- PERUBAHAN SELESAI ---
+// Siapkan file audio Anda (pastikan file 'alert.mp3' ada)
+const waterAlertSound = new Audio('alert.mp3');
 
 function updateWater() {
-  waterCount.textContent = waterData.count;
-  document.getElementById("waterSummary").textContent = waterData.count;
-  progress.style.width = `${(waterData.count / 8) * 100}%`;
-  localStorage.setItem("waterData", JSON.stringify(waterData));
+  waterCount.textContent = waterData.count;
+  document.getElementById("waterSummary").textContent = waterData.count;
+  progress.style.width = `${(waterData.count / 8) * 100}%`;
+  localStorage.setItem("waterData", JSON.stringify(waterData));
 }
 
 document.getElementById("addWaterBtn").addEventListener("click", () => {
-  if (waterData.count < 8) {
-    waterData.count++;
-    waterData.lastDrink = Date.now();
-    updateWater();
-  } else {
-    alert("Kamu sudah mencapai target 8 gelas hari ini 💧");
-    // --- PERUBAHAN DIMULAI ---
-    waterAlertSound.play(); // 2. Mainkan suara saat target terlampaui
-    // --- PERUBAHAN SELESAI ---
-  }
+  if (waterData.count < 8) {
+    waterData.count++;
+    waterData.lastDrink = Date.now();
+    updateWater();
+  } else {
+    alert("Kamu sudah mencapai target 8 gelas hari ini 💧");
+    waterAlertSound.play(); // Mainkan suara saat target terlampaui
+  }
 });
 
 document.getElementById("resetWaterBtn").addEventListener("click", () => {
-  waterData.count = 0;
-  waterData.lastDrink = null;
-  updateWater();
+  waterData.count = 0;
+  waterData.lastDrink = null;
+  updateWater();
 });
 
 // Notifikasi peringatan minum air
 function checkWaterReminder() {
-  const now = Date.now();
-  if (!waterData.lastDrink) return;
-  const diff = now - waterData.lastDrink;
-  const hours = diff / (1000 * 60 * 60);
-  if (hours >= 2) {
-    alert("⚠️ Sudah lebih dari 2 jam kamu belum minum air! Yuk minum dulu 💦");
-    waterData.lastDrink = Date.now();
-    updateWater();
-  }
+  const now = Date.now();
+  if (!waterData.lastDrink) return;
+  const diff = now - waterData.lastDrink;
+  const hours = diff / (1000 * 60 * 60);
+  if (hours >= 2) {
+    alert("⚠️ Sudah lebih dari 2 jam kamu belum minum air! Yuk minum dulu 💦");
+    waterData.lastDrink = Date.now();
+    updateWater();
+  }
 }
 setInterval(checkWaterReminder, 60000 * 5); // cek tiap 5 menit
 
