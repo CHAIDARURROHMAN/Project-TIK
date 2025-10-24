@@ -218,7 +218,6 @@ footer {
 }
 
 /* ============ DARK MODE ============ */
-/* Ganti blok dark mode Anda dengan ini */
 
 body.dark {
   background: var(--dark-bg);
