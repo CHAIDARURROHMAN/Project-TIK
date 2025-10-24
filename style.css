@@ -217,19 +217,69 @@ footer {
   50% {transform: translateY(-5px);}
 }
 
-/* Dark Mode */
+/* ============ DARK MODE ============ */
+/* Ganti blok dark mode Anda dengan ini */
+
 body.dark {
   background: var(--dark-bg);
   color: #e0e0e0;
 }
+
 body.dark .app-container {
   background: var(--dark-card);
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
 }
+
+/* Teks sekunder (subjudul & footer) */
+body.dark .subtitle,
+body.dark footer {
+  color: #b0bec5; /* Abu-abu terang agar tetap terbaca */
+}
+
+/* Tombol Navigasi */
+body.dark .nav {
+  border-color: #333;
+}
+
 body.dark .tab-button {
-  background: var(--dark-card);
+  background: var(--dark-bg); /* Samakan dgn body, seperti di light mode */
   color: #e0e0e0;
+  border-color: #333;
 }
+
+body.dark .tab-button:hover {
+  background: var(--primary);
+  color: white;
+}
+
 body.dark .tab-button.active {
   background: var(--primary);
   color: white;
+}
+
+/* Card, List Item, & Kontainer Konten */
+body.dark .card,
+body.dark #taskList li,
+body.dark .weather-display {
+  background: var(--dark-bg); /* Samakan dgn body, seperti di light mode */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border: 1px solid #333; /* Tambah border tipis */
+}
+
+/* Input Fields */
+body.dark .todo-controls input,
+body.dark .weather-controls input {
+  background-color: var(--dark-bg);
+  color: #e0e0e0;
+  border: 1px solid #444;
+}
+
+/* Placeholder Teks di Input */
+body.dark input::placeholder {
+  color: #777;
+}
+
+/* Progress Bar */
+body.dark .progress-bar-container {
+  background: var(--dark-bg);
 }
