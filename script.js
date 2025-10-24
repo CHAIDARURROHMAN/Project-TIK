@@ -138,31 +138,27 @@ setInterval(checkWaterReminder, 60000 * 5); // cek tiap 5 menit
 updateWater();
 
 // === WEATHER INFO ===
-// === WEATHER INFO ===
 const cityInput = document.getElementById("cityInput");
 const fetchWeatherBtn = document.getElementById("fetchWeatherBtn");
 const weatherDisplay = document.getElementById("weatherDisplay");
 
 async function fetchWeather() {
-  const city = cityInput.value.trim();
-  if (!city) return;
+  const city = cityInput.value.trim();
+  if (!city) return;
 
-  weatherDisplay.innerHTML = "<p>Mengambil data cuaca...</p>";
-  try {
-    // --- PERUBAHAN DIMULAI ---
+  weatherDisplay.innerHTML = "<p>Mengambil data cuaca...</p>";
+  try {
+    // Step 1: Modifikasi query untuk fokus mencari di Indonesia
+    const searchQuery = `${city}, Indonesia`;
+    const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(searchQuery)}&count=1&language=id&format=json`);
 
-    // Step 1: Modifikasi query untuk fokus mencari di Indonesia
-    // Kita tambahkan ", Indonesia" pada query pencarian
-    const searchQuery = `${city}, Indonesia`;
-    const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(searchQuery)}&count=1&language=id&format=json`);
-    
-    const geoData = await geoRes.json();
+    const geoData = await geoRes.json();
 
     // Validasi 1: Kota tidak ditemukan sama sekali
-    if (!geoData.results || geoData.results.length === 0) {
-      weatherDisplay.innerHTML = `<p style='color:red;'>Kota tidak ditemukan.</p>`;
-      return;
-    }
+    if (!geoData.results || geoData.results.length === 0) {
+      weatherDisplay.innerHTML = `<p style='color:red;'>Kota tidak ditemukan.</p>`;
+      return;
+    }
 
     const result = geoData.results[0];
 
@@ -172,35 +168,7 @@ async function fetchWeather() {
       return;
     }
 
-    const { latitude, longitude, name, country } = result;
-    // --- PERUBAHAN SELESAI ---
-
-
-    // Step 2: ambil data cuaca berdasarkan koordinat (Ini tetap sama)
-    const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`);
-    const data = await res.json();
-    const temp = data.current_weather.temperature;
-    const wind = data.current_weather.windspeed;
-    const weatherCode = data.current_weather.weathercode;
-
-    weatherDisplay.innerHTML = `
-      <h3>${name}, ${country}</h3>
-      <p><b>Suhu:</b> ${temp}°C</p>
-      <p><b>Kecepatan Angin:</b> ${wind} km/jam</p>
-      <p><b>Kode Cuaca:</b> ${weatherCode}</p>
-    `;
-    localStorage.setItem("lastWeather", `${temp}°C`);
-    document.getElementById("weatherSummary").textContent = `${temp}°C`;
-  } catch (err) {
-    console.error(err);
-    weatherDisplay.innerHTML = "<p style='color:red;'>Gagal mengambil data cuaca.</p>";
-  }
-}
-fetchWeatherBtn.addEventListener("click", fetchWeather);
-      return;
-    }
-
-    const { latitude, longitude, name, country } = geoData.results[0];
+    const { latitude, longitude, name, country } = result;
 
     // Step 2: ambil data cuaca berdasarkan koordinat
     const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`);
