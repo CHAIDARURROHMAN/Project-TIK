@@ -231,5 +231,5 @@ body.dark .tab-button {
 }
 body.dark .tab-button.active {
   background: var(--primary);
-  color: black;
+  color: white;
 }
