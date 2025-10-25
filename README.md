@@ -14,7 +14,6 @@ Tema: **“Solusi Digital untuk Kehidupan Sehari-hari”**
 LifeSync dirancang untuk mempermudah rutinitas pengguna dengan menggabungkan beberapa fungsi praktis dalam satu tempat.  
 Semua data disimpan secara lokal menggunakan **LocalStorage**, sehingga tetap tersimpan meskipun browser ditutup.
 
-Aplikasi ini bisa dijalankan langsung di browser (tanpa instalasi) dan dapat diunggah ke **GitHub Pages**.
 
 ---
 
@@ -42,10 +41,11 @@ Kelola daftar tugas harian secara mudah.
 ---
 
 ### 💧 **Pengingat Minum Air**
-Fitur sederhana untuk melacak jumlah air yang diminum setiap hari.
+Fitur sederhana untuk jumlah air yang diminum setiap hari.
 - Target harian: 8 gelas.
 - Tampilkan sisa jumlah gelas yang belum diminum.
 - Data disimpan lokal agar progres tidak hilang.
+- Notifikasi minum air — sistem memeriksa tiap 5 menit apakah sudah >2 jam dari terakhir minum.
 
 ---
 
