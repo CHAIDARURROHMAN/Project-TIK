@@ -1,4 +1,3 @@
-// Tabs navigation
 const tabs = document.querySelectorAll(".tab-button");
 const sections = document.querySelectorAll(".tab-content");
 
@@ -11,7 +10,7 @@ tabs.forEach((btn) => {
   });
 });
 
-// Greeting & Date
+
 const greeting = document.getElementById("greeting");
 const dateEl = document.getElementById("date");
 const hour = new Date().getHours();
@@ -25,7 +24,7 @@ dateEl.textContent = new Date().toLocaleDateString("id-ID", {
   year: "numeric",
 });
 
-// Dark Mode Toggle
+
 const darkToggle = document.getElementById("darkToggle");
 darkToggle.addEventListener("click", () => {
   document.body.classList.toggle("dark");
@@ -35,7 +34,7 @@ if (localStorage.getItem("darkMode") === "true") {
   document.body.classList.add("dark");
 }
 
-// === TO-DO LIST ===
+
 const taskInput = document.getElementById("taskInput");
 const addTask = document.getElementById("addTask");
 const taskList = document.getElementById("taskList");
@@ -83,12 +82,12 @@ addTask.addEventListener("click", () => {
 
 renderTasks();
 
-// === WATER REMINDER ===
+
 let waterData = JSON.parse(localStorage.getItem("waterData")) || { count: 0, lastDrink: null };
 const waterCount = document.getElementById("waterCount");
 const progress = document.getElementById("waterProgress");
 
-// Siapkan file audio Anda (pastikan file 'alert.mp3' ada)
+
 const waterAlertSound = new Audio('alert.mp3');
 
 function updateWater() {
@@ -104,8 +103,8 @@ document.getElementById("addWaterBtn").addEventListener("click", () => {
     waterData.lastDrink = Date.now();
     updateWater();
   } else {
-    alert("Kamu sudah mencapai target 8 gelas hari ini 💧");
-    waterAlertSound.play(); // Mainkan suara saat target terlampaui
+    alert("Anda sudah mencapai target 8 gelas hari ini 💧");
+    waterAlertSound.play(); 
   }
 });
 
@@ -115,7 +114,7 @@ document.getElementById("resetWaterBtn").addEventListener("click", () => {
   updateWater();
 });
 
-// Notifikasi peringatan minum air
+
 function checkWaterReminder() {
   const now = Date.now();
   if (!waterData.lastDrink) return;
@@ -131,7 +130,7 @@ setInterval(checkWaterReminder, 60000 * 5); // cek tiap 5 menit
 
 updateWater();
 
-// === WEATHER INFO ===
+
 const cityInput = document.getElementById("cityInput");
 const fetchWeatherBtn = document.getElementById("fetchWeatherBtn");
 const weatherDisplay = document.getElementById("weatherDisplay");
@@ -142,13 +141,13 @@ async function fetchWeather() {
 
   weatherDisplay.innerHTML = "<p>Mengambil data cuaca...</p>";
   try {
-    // Step 1: Modifikasi query untuk fokus mencari di Indonesia
+
     const searchQuery = `${city}, Indonesia`;
     const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(searchQuery)}&count=1&language=id&format=json`);
 
     const geoData = await geoRes.json();
 
-    // Validasi 1: Kota tidak ditemukan sama sekali
+  
     if (!geoData.results || geoData.results.length === 0) {
       weatherDisplay.innerHTML = `<p style='color:red;'>Kota tidak ditemukan.</p>`;
       return;
@@ -156,7 +155,7 @@ async function fetchWeather() {
 
     const result = geoData.results[0];
 
-    // Validasi 2: Cek apakah kode negara adalah "ID" (Indonesia)
+  
     if (result.country_code !== "ID") {
       weatherDisplay.innerHTML = `<p style='color:red;'>Kota '${city}' tidak ditemukan di Indonesia.</p>`;
       return;
@@ -164,7 +163,7 @@ async function fetchWeather() {
 
     const { latitude, longitude, name, country } = result;
 
-    // Step 2: ambil data cuaca berdasarkan koordinat
+   
     const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`);
     const data = await res.json();
     const temp = data.current_weather.temperature;
