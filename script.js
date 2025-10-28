@@ -88,7 +88,7 @@ const waterCount = document.getElementById("waterCount");
 const progress = document.getElementById("waterProgress");
 
 
-const waterAlertSound = new Audio('alert.mp3');
+const waterAlertSound = new Audio('notif.mp3');
 
 function updateWater() {
   waterCount.textContent = waterData.count;
