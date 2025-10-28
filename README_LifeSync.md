@@ -83,12 +83,11 @@ Project-TIK/
 │                # Tema dark mode
 │                # Dukungan untuk perangkat kecil
 │
-├── script.js    # Logika dashboard & navigasi
-│                # Fitur daftar tugas
-│                # Fitur minum air
-│                # Fitur cuaca (API)
-│                # Sistem dark mode
-│
+└── script.js    # Logika dashboard & navigasi
+                 # Fitur daftar tugas
+                 # Fitur minum air
+                 # Fitur cuaca (API)
+                 # Sistem dark mode
 
 ```
 
