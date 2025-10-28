@@ -122,7 +122,7 @@ function checkWaterReminder() {
   const diff = now - waterData.lastDrink;
   const hours = diff / (1000 * 60 * 60);
   if (hours >= 2) {
-    alert("⚠️ Sudah lebih dari 2 jam kamu belum minum air! Yuk minum dulu 💦");
+    alert("⚠️ Sudah lebih dari 2 jam kamu belum minum air! Yuk minum dulu 💧🥛");
     waterData.lastDrink = Date.now();
     updateWater();
   }
