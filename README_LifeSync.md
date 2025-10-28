@@ -1,9 +1,8 @@
 
 # 🌐 LifeSync – Asisten Digital Pribadi
 
-> *“Hidup lebih teratur, produktif, dan sehat — semua dalam satu aplikasi web sederhana.”*
 
-**LifeSync** adalah aplikasi web interaktif yang dirancang untuk membantu pengguna dalam mengatur aktivitas harian mereka secara efisien.  
+**LifeSync** adalah aplikasi web interaktif yang dirancang untuk membantu pengguna dalam mengatur aktivitas harian secara efisien.  
 Aplikasi ini berfokus pada tiga aspek utama kehidupan sehari-hari: **produktivitas, kesehatan, dan kesadaran waktu**, melalui fitur **Dashboard Harian**, **To-Do List**, **Pengingat Minum Air**, dan **Informasi Cuaca**.  
 Tampilan dibuat dengan gaya **modern, responsif, dan mendukung mode gelap (Dark Mode)** agar nyaman digunakan kapan pun.
 
@@ -50,15 +49,15 @@ Kelola kegiatan harian dengan mudah:
 
 ### 💧 3. Pengingat Minum Air
 Fitur untuk menjaga hidrasi tubuh:
-- Input jumlah air yang diminum (ml).  
-- Progress bar menunjukkan target harian (misalnya 2000ml).  
+- Input jumlah air yang diminum (Pergelas).  
+- Progress bar menunjukkan target harian (misalnya 8 Gelas atau 2000ml).  
 - Pengingat otomatis setiap 2 jam.  
 - Reset otomatis setiap tengah malam.
 
 ### 🌦️ 4. Informasi Cuaca
 Membantu pengguna mempersiapkan diri sesuai kondisi lingkungan:
 - Dapat mencari cuaca berdasarkan **nama kota**.  
-- Menampilkan suhu, kelembapan, dan kondisi langit.  
+- Menampilkan suhu, kecepatan angin, dan kode cuaca.  
 - Menggunakan **Open-Meteo API** yang gratis dan cepat.  
 - Tampilan bergaya *card* dengan ikon cuaca otomatis.
 
@@ -75,27 +74,22 @@ Mode tampilan yang nyaman untuk malam hari:
 ```
 Project-TIK/
 │
-├── index.html             # Halaman utama (Dashboard)
-├── todo.html              # Halaman To-Do List
-├── water.html             # Halaman Pengingat Minum Air
-├── weather.html           # Halaman Cuaca
+├── index.html   # Halaman utama (Dashboard)
+|                # Halaman To-Do List
+|                # Halaman Pengingat Minum Air
+|                # Halaman Cuaca
 │
-├── css/
-│   ├── style.css          # Gaya umum & layout utama
-│   ├── darkmode.css       # Tema dark mode
-│   └── responsive.css     # Dukungan untuk perangkat kecil
+├── style.css    # Gaya umum & layout utama
+│                # Tema dark mode
+│                # Dukungan untuk perangkat kecil
 │
-├── js/
-│   ├── main.js            # Logika dashboard & navigasi
-│   ├── todo.js            # Fitur daftar tugas
-│   ├── water.js           # Fitur minum air
-│   ├── weather.js         # Fitur cuaca (API)
-│   └── theme.js           # Sistem dark mode
+├── script.js    # Logika dashboard & navigasi
+│                # Fitur daftar tugas
+│                # Fitur minum air
+│                # Fitur cuaca (API)
+│                # Sistem dark mode
 │
-└── assets/
-    ├── icons/             # Ikon dari Font Awesome
-    ├── images/            # Screenshot & ilustrasi
-    └── fonts/             # Font tambahan jika diperlukan
+
 ```
 
 ---
@@ -121,9 +115,9 @@ Kunjungi:
 
 | Teknologi | Keterangan |
 |------------|------------|
-| **HTML5** | Struktur halaman dan konten |
-| **CSS3 (Flexbox + Grid)** | Desain responsif dan animasi |
-| **JavaScript (Vanilla JS)** | Logika interaktif, DOM, dan penyimpanan data |
+| **HTML** | Struktur halaman dan konten |
+| **CSS** | Desain responsif dan animasi |
+| **JavaScript** | Logika interaktif, DOM, dan penyimpanan data |
 | **LocalStorage API** | Menyimpan data tugas dan pengaturan pengguna |
 | **Open-Meteo API** | Mengambil data cuaca berdasarkan lokasi |
 | **Font Awesome 6** | Ikon navigasi dan simbol UI |
@@ -131,65 +125,13 @@ Kunjungi:
 
 ---
 
-## 📷 Dokumentasi Tampilan
-
-### Dashboard
-![Dashboard](57d657f2-9091-42fa-bb3e-a3455e9089ec.png)
-
-### To-Do List
-![To-Do List](92e50529-9745-42fe-bcdc-557858369a28.png)
-
-### Pengingat Minum Air
-![Minum Air](8db91ff9-41bc-40a4-b2cd-25a19c3cbd66.png)
-
-### Informasi Cuaca
-![Cuaca](aa9fda08-963c-40ad-858e-3b4de5d383c1.png)
-
----
-
 ## 🔔 Cara Menggunakan Fitur
 
 | Fitur | Langkah Penggunaan |
 |--------|-------------------|
-| **To-Do List** | Ketik tugas di kolom input → Tekan Enter → Klik centang jika selesai. |
-| **Pengingat Minum Air** | Tekan tombol “+250ml” setiap kali minum → Bar akan naik. |
-| **Cuaca** | Masukkan nama kota → Klik “Cek Cuaca” → Data otomatis muncul. |
+| **To-Do List** | Ketik tugas di kolom input → Tekan Tambah → Klik centang jika selesai. |
+| **Pengingat Minum Air** | Tekan tombol “+ 1 gelas" setiap kali minum → Bar akan naik. |
+| **Cuaca** | Masukkan nama kota → Klik “Cari” → Data otomatis muncul. |
 | **Dark Mode** | Klik ikon bulan/matahari di pojok kanan atas. |
 
 ---
-
-## 🧩 Bahasa dan Mode
-
-LifeSync mendukung dua bahasa:  
-- 🇮🇩 **Bahasa Indonesia (id)**  
-- 🇬🇧 **English (en)**  
-
-Mode dapat diubah melalui tombol bahasa di bagian footer.
-
----
-
-## 🧠 Rencana Pengembangan (Future Updates)
-
-- [ ] Menambahkan sistem login pengguna.  
-- [ ] Menyimpan data di database online (Firebase).  
-- [ ] Menambahkan pengingat waktu sholat dan jadwal sekolah.  
-- [ ] Integrasi dengan Google Calendar.  
-- [ ] Notifikasi suara untuk pengingat minum air.
-
----
-
-## 👨‍💻 Pengembang
-
-| Nama | Peran | Tahun |
-|-------|-------|--------|
-| **Chaidarur Rohman** | Perancang, Programmer, dan Desainer UI | 2025 |
-
-> Proyek ini dibuat sebagai bagian dari **Tugas Akhir Mata Pelajaran TIK – Kelas XI RPL**,  
-> dengan tujuan meningkatkan kemampuan pembuatan aplikasi berbasis web interaktif.
-
----
-
-## 📄 Lisensi
-
-Proyek ini dilisensikan di bawah [MIT License](https://opensource.org/licenses/MIT).  
-Artinya, kamu bebas menggunakan, memodifikasi, dan mendistribusikan ulang kode ini selama mencantumkan kredit pembuat asli.
